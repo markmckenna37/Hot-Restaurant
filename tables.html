@@ -1,86 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Star Wars - Express</title>
-  <!-- Latest compiled and minified CSS & JS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://code.jquery.com/jquery.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Star Wars - Express</title>
+    <!-- Latest compiled and minified CSS & JS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </head>
+
 <body>
 
-  <div class="container">
-    <div class="jumbotron">
-      <h1>YEEEEEEAH</h1>
-      <h3>The greatest resource in the galaxy for Star Wars statistics!</h3>
-      <hr>
-      <a href="/"><button class="btn btn-danger btn-lg"><span class="fa fa-eye"></span> View Characters</button></a>
-    </div>
-    <div class="row">
 
-      <div class="col-12">
 
-        <div class="card">
-          <div class="card-header">
-            <h3><strong>Add Characters</strong></h3>
-          </div>
-          <div class="card-body">
-            <form method="POST" role="form">
 
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name">
-              </div>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Hot Restaurant</h1>
+            <h3>The hottest restaurant</h3>
+            <hr>
+            <a href="/add"><button class="btn btn-danger btn-lg"><span class="fa fa-plus"></span> Add New
+                    Character</button></a>
+            <a href="/view"><button class="btn btn-danger btn-lg"><span class="fa fa-eye"></span> Main Page</button></a>
+        </div>
+        <div class="row">
 
-              <div class="form-group">
-                <label for="role">Role</label>
-                <input type="text" class="form-control" id="role">
-              </div>
+            <div class="col-12">
 
-              <div class="form-group">
-                <label for="age">Age</label>
-                <input type="text" class="form-control" id="age">
-              </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3><strong>Current Reservations</strong></h3>
+                    </div>
 
-              <div class="form-group">
-                <label for="force-points">Force Points</label>
-                <input type="text" class="form-control" id="force-points">
-              </div>
-
-            </form>
-            <br>
-            <div class="text-right">
-              <button type="submit" class="btn btn-primary btn-md" id="add-btn"><span class="fa fa-fire"></span> Add to the Force</button>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><strong>Table #</strong></h3>
+                        </div>
+                        <div class="card-body">
+                            <h2 id="name"></h2>
+                            <div id="tableCard">
+                                <h3><strong>Phone Number:</strong> <span id="number"></span></h3>
+                                <h3><strong>Email:</strong> <span id="email"></span></h3>
+                                <h3><strong>Unique ID:</strong> <span id="id"></span></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
-      </div>
-    </div>
-  </div>
+        <script type="text/javascript">
+            // In this code, jQuery is used to "download" the data from our server
+            // We then dynamically display this content in our table. This is very similar to the group projects you just completed.
+            // It's also very similar to the NYT search application. In fact, I copied a ton of code from there.
 
-  <script type="text/javascript">
-    // Question: What does this code do?
-    $("#add-btn").on("click", function(event) {
-      event.preventDefault();
-      var newCharacter = {
-        name: $("#name").val().trim(),
-        role: $("#role").val().trim(),
-        age: $("#age").val().trim(),
-        forcePoints: $("#force-points").val().trim()
-      };
+            function runTableQuery() {
 
-      // Question: What does this code do??
-      $.post("/api/characters", newCharacter)
-        .then(function(data) {
-          console.log("add.html", data);
-          alert("Adding character...");
-        });
-    });
-  </script>
+                // Here we get the location of the root page.
+                // We use this instead of explicitly saying the URL is localhost:3001 because the url will change when we deploy.
+                var currentURL = window.location.origin;
+
+                // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+                $.ajax({
+                        url: currentURL + "/api/tables",
+                        method: "GET"
+                    })
+                    .done(function (tableData) {
+
+                        // Here we are logging the URL so we have access to it for troubleshooting
+                        console.log("------------------------------------");
+                        console.log("URL: " + currentURL + "/api/tables");
+                        console.log("------------------------------------");
+
+                        // Here we then log the NYTData to console, where it will show up as an object.
+                        console.log(tableData);
+                        console.log("------------------------------------")
+
+                        // Loop through and display each of the customers
+                        for (var i = 0; i < tableData.length; i++) {
+
+                            // Create the HTML Well (Section) and Add the table content for each reserved table
+                            var tableSection = $("<div>");
+                            tableSection.addClass('well');
+                            tableSection.attr('id', 'tableWell-' + i + 1)
+                            $('#tableSection').append(tableSection);
+
+                            var tableNumber = i + 1;
+
+
+                            // Then display the remaining fields in the HTML (Section Name, Date, URL)
+                            $("#tableWell-" + i + 1).append('<h2><span class="label label-primary">' + tableNumber +
+                                "</span> | " + tableData[i].customerID + "</h2>");
+                        }
+                    });
+            }
+
+            function runWaitListQuery() {
+
+                // Here we get the location of the root page.
+                // We use this instead of explicitly saying the URL is localhost:3001 because the url will change when we deploy.
+                var currentURL = window.location.origin;
+
+                // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+                $.ajax({
+                        url: currentURL + "/api/waitlist",
+                        method: "GET"
+                    })
+                    .done(function (waitlistData) {
+
+                        // Here we are logging the URL so we have access to it for troubleshooting
+                        console.log("------------------------------------");
+                        console.log("URL: " + currentURL + "/api/waitlist");
+                        console.log("------------------------------------");
+
+                        // Here we then log the NYTData to console, where it will show up as an object.
+                        console.log(waitlistData);
+                        console.log("------------------------------------")
+
+                        // Loop through and display each of the customers
+                        for (var i = 0; i < waitlistData.length; i++) {
+
+                            // Create the HTML Well (Section) and Add the table content for each reserved table
+                            var waitlistSection = $("<div>");
+                            waitlistSection.addClass('well');
+                            waitlistSection.attr('id', 'waitlistWell-' + i + 1)
+                            $('#waitlistSection').append(waitlistSection);
+
+                            var tableNumber = i + 1;
+
+                            // Then display the remaining fields in the HTML (Section Name, Date, URL)
+                            $("#waitlistWell-" + i + 1).append('<h2><span class="label label-primary">' +
+                                tableNumber + "</span> | " + waitlistData[i].customerID + "</h2>");
+                        }
+                    });
+            }
+
+            // This function resets all of the data in our tables. This is intended to let you restart a demo.
+            function clearTable() {
+
+                var currentURL = window.location.origin;
+                $.ajax({
+                    url: currentURL + "/api/clear",
+                    method: "POST"
+                })
+
+            }
+
+            $("#clear").on('click', function () {
+                alert("Clearing...");
+                clearTable();
+
+                // Refresh the page after data is cleared
+                location.reload();
+            })
+
+
+            // Run Queries!
+            // ==========================================
+            runTableQuery();
+            runWaitListQuery();
+
+
+
+            // $("#add-btn").on("click", function () {
+
+
+                //   searchedCharacter = searchedCharacter.replace(/\s+/g, "").toLowerCase();
+
+            //     $.get("/add", function (tables) {
+            //         console.log(data);
+            //         if (data) {
+            //             $("#tableCard").show();
+            //             $("#name").text(data.name);
+            //             $("#number").text(data.number);
+            //             $("#email").text(data.email);
+            //             $("#id").text(data.id);
+            //         }
+            //     });
+            // });
+        </script>
 
 </body>
+
 </html>
