@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Reservation</title>
@@ -10,6 +11,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </head>
+
 <body>
 
   <div class="container">
@@ -26,7 +28,7 @@
 
         <div class="card">
           <div class="card-header">
-            <h3><strong>Add Characters</strong></h3>
+            <h3><strong>Make a reservtion!</strong></h3>
           </div>
           <div class="card-body">
             <form method="POST" role="form">
@@ -54,7 +56,8 @@
             </form>
             <br>
             <div class="text-right">
-              <button type="submit" class="btn btn-primary btn-md" id="add-btn"><span class="fa fa-fire"></span>Make your reservation!</button>
+              <button type="submit" class="btn btn-primary btn-md" id="add-btn"><span class="fa fa-fire"></span>Make
+                your reservation!</button>
             </div>
           </div>
         </div>
@@ -64,21 +67,27 @@
   </div>
 
   <script type="text/javascript">
-    $("#add-btn").on("click", function(event) {
-        event.preventDefault();
-        var newTable = {
-            name: $("#name").val().trim(),
-            number: $("#number").val().trim(),
-            email: $("#email").val().trim(),
-            id: $("#id").val().trim()
-        };
-        $.post("./tables", newTable)
-        .then(function(data) {
-            console.log("add.html", data);
+    $("#add-btn").on("click", function (event) {
+      event.preventDefault();
+      const newTable = {
+        name: $("#name").val().trim(),
+        number: $("#number").val().trim(),
+        email: $("#email").val().trim(),
+        id: $("#id").val().trim()
+      };
+      const currentURL = window.location.origin
+      $.post(currentURL + "/api/tables", newTable, function(data) {
+          if (data) {
+            alert("You good!")
+
+          }
+          if (!data) {
+            alert("You gotta wait")
+          }
         });
-        alert("Adding Table, click view tables to see where you are in the queue");
     });
   </script>
 
 </body>
+
 </html>
